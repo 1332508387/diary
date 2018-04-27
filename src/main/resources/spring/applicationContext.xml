@@ -1,0 +1,84 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:aop="http://www.springframework.org/schema/aop"
+	xmlns:mvc="http://www.springframework.org/schema/mvc" xmlns:context="http://www.springframework.org/schema/context"
+	xmlns:util="http://www.springframework.org/schema/util" xmlns:tx="http://www.springframework.org/schema/tx"
+	xsi:schemaLocation="http://www.springframework.org/schema/mvc http://www.springframework.org/schema/mvc/spring-mvc-4.2.xsd
+		http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-4.2.xsd
+		http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-4.2.xsd
+		http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop-4.2.xsd
+		http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util-4.2.xsd
+		http://www.springframework.org/schema/tx http://www.springframework.org/schema/tx/spring-tx-4.2.xsd">
+
+	<!-- 开启包扫描，cn.hebau.easymall 为了扫描common包下的伪service -->
+	<!--<context:component-scan base-package="diary.service,diary.aspect,diary.security.*" />-->
+	<context:component-scan base-package="diary.service,diary.aspect" />
+
+	<!-- 引入数据库配置文件 -->
+	<!-- <context:property-placeholder location="classpath:db-mysql.properties"> -->
+	<bean
+		class="org.springframework.beans.factory.config.PropertyPlaceholderConfigurer">
+		<property name="locations"> <!-- PropertyPlaceholderConfigurer类中有个locations属性，接收的是一个数组，即我们可以在下面配好多个properties文件 -->
+			<array>
+				<value>classpath:db-mysql.properties</value>
+				<value>classpath:env.properties</value>
+			</array>
+		</property>
+	</bean>
+	
+	<!-- 开启切面功能 -->
+	<aop:aspectj-autoproxy />
+
+	<!-- 配置数据源，使用高性能 HikariCP 连接池 -->
+	<bean id="dataSource" class="com.zaxxer.hikari.HikariDataSource">
+		<property name="driverClassName" value="${jdbc.driverClassName}"></property>
+		<property name="jdbcUrl" value="${jdbc.jdbcUrl}"></property>
+		<property name="username" value="${jdbc.username}"></property>
+		<property name="password" value="${jdbc.password}"></property>
+	</bean>
+
+	<!-- 国际化资源配置 -->
+	<bean id="messageSource"
+		class="org.springframework.context.support.ResourceBundleMessageSource">
+		<!-- 国际化信息所在的文件名 -->
+		<property name="basenames">
+			<list>
+				<value>messages/message</value>
+				<value>messages/security-messages</value>
+				<!-- <value>>messages/security-messages</value> -->
+			</list>
+		</property>
+		<!-- 如果在国际化资源文件中找不到对应代码的信息，就用这个代码作为名称 -->
+		<property name="useCodeAsDefaultMessage" value="true" />
+	</bean>
+	
+	<!-- 配置 Google Kaptcha -->
+	<bean id="captchaProducer" class="com.google.code.kaptcha.impl.DefaultKaptcha">
+	   <property name="config">
+	      <bean class="com.google.code.kaptcha.util.Config">
+	         <constructor-arg>
+	            <props>
+	               <prop key="kaptcha.border">yes</prop>
+	               <prop key="kaptcha.border.color">105,179,90</prop>
+	               <prop key="kaptcha.textproducer.font.color">blue</prop>
+	               <prop key="kaptcha.image.width">80</prop>
+	               <prop key="kaptcha.image.height">30</prop>
+	               <prop key="kaptcha.textproducer.font.size">27</prop>
+	               <prop key="kaptcha.session.key">KAPTCHA_VERIFY_CODE</prop>
+	               <prop key="kaptcha.textproducer.char.length">4</prop>
+	               <prop key="kaptcha.textproducer.font.names">宋体,楷体,微软雅黑</prop>
+	               <prop key="kaptcha.textproducer.char.string">
+					   123456789QWERTYUIOPLKJHGFDSAZXCVBNM
+				   </prop>
+	               <prop key="kaptcha.obscurificator.impl">com.google.code.kaptcha.impl.WaterRipple</prop>
+	               <prop key="kaptcha.noise.color">red</prop>
+	               <prop key="kaptcha.noise.impl">com.google.code.kaptcha.impl.NoNoise</prop>
+	               <prop key="kaptcha.background.clear.from">white</prop>
+	               <prop key="kaptcha.background.clear.to">white</prop>
+	            </props>
+	         </constructor-arg>
+	      </bean>
+	   </property>
+	</bean>
+
+</beans>

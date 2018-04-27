@@ -1,0 +1,8 @@
+<component name="ArtifactManager">
+  <artifact type="war" name="diary:war">
+    <output-path>$PROJECT_DIR$/target</output-path>
+    <root id="archive" name="diary-1.0-SNAPSHOT.war">
+      <element id="artifact" artifact-name="diary:war exploded" />
+    </root>
+  </artifact>
+</component>

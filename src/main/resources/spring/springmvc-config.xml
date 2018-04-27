@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:aop="http://www.springframework.org/schema/aop"
+	xmlns:mvc="http://www.springframework.org/schema/mvc" xmlns:context="http://www.springframework.org/schema/context"
+	xmlns:util="http://www.springframework.org/schema/util" xmlns:tx="http://www.springframework.org/schema/tx"
+	xsi:schemaLocation="http://www.springframework.org/schema/mvc http://www.springframework.org/schema/mvc/spring-mvc-4.2.xsd
+		http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-4.2.xsd
+		http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-4.2.xsd
+		http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop-4.2.xsd
+		http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util-4.2.xsd
+		http://www.springframework.org/schema/tx http://www.springframework.org/schema/tx/spring-tx-4.2.xsd">
+
+	<!-- 开启包扫描 -->
+	<context:component-scan
+		base-package="diary.controller" />
+
+	<!-- 配置 mvc 注解驱动：启用 spring mvc 注解 -->
+	<mvc:annotation-driven />
+	
+	<context:property-placeholder location="classpath:env.properties"/>
+
+	<!-- 配置资源视图解析器：在 controller 中返回页面时，将拼接前缀 /WEB-INF/pages/ 后缀 .jsp -->
+	<bean
+		class="org.springframework.web.servlet.view.InternalResourceViewResolver">
+		<property name="prefix" value="/WEB-INF/pages/"></property>
+		<property name="suffix" value=".jsp"></property>
+	</bean>
+
+	<!-- 定义文件上传解析器，有multipartResolver，在源码中写死 -->
+	<bean id="multipartResolver"
+		class="org.springframework.web.multipart.commons.CommonsMultipartResolver">
+		<!-- 设定默认编码 -->
+		<property name="defaultEncoding" value="UTF-8"></property>
+		<!-- 设定文件上传的最大值10MB，10*1024*1024 -->
+		<property name="maxUploadSize" value="10485760"></property>
+	</bean>
+	
+	<!-- 国际化资源配置 -->
+    <!-- <bean id="messageSource" class="org.springframework.context.support.ResourceBundleMessageSource">
+        国际化信息所在的文件名
+        <property name="basename" value="messages/message"/>
+        如果在国际化资源文件中找不到对应代码的信息，就用这个代码作为名称 
+        <property name="useCodeAsDefaultMessage" value="true" />
+    </bean> -->
+
+	<!-- <mvc:interceptors>
+		<mvc:interceptor>
+			<mvc:mapping path="/**"/>
+			<mvc:exclude-mapping path="/timeout"/>
+			<mvc:exclude-mapping path="/login"/>
+			<mvc:exclude-mapping path="/user/doLogin"/>
+			<mvc:exclude-mapping path="/register"/>
+			<mvc:exclude-mapping path="/user/doRegister"/>
+			<mvc:exclude-mapping path="/img"/>
+			<mvc:exclude-mapping path="/css/**"/>
+			<mvc:exclude-mapping path="/img/**"/>
+			<mvc:exclude-mapping path="/js/**"/>
+			<mvc:exclude-mapping path="/res/**"/>
+			<bean class="diary.intercepter.UserLoginInterceptor"></bean>
+		</mvc:interceptor>
+	</mvc:interceptors> -->
+	
+	<!-- 处理静态资源被“/”所拦截的问题 -->
+	<mvc:default-servlet-handler/>
+
+</beans>
